@@ -4,6 +4,10 @@ public class CalculatorPrototype implements CalculatorIF {
 
 	@Override
 	public int sum(int m, int n) {
+		//if n is negative, do a subtraction
+		if(n<0){
+			return subtract(m,-n);
+		}
 		for (int i=0;i<n;i++){
 			m++;
 		}
@@ -12,22 +16,49 @@ public class CalculatorPrototype implements CalculatorIF {
 
 	@Override
 	public int divide(int m, int n) {
+		if(n==0){
+			throw new ArithmeticException();
+		}
+		//use positive values and change sign, according to initial variables, at return
+		int tempM=m<0?-m:m;
+		int tempN=n<0?-n:n;
 		int res=0;
-		while(m>0){
-			m-=n;
+		while(tempM>0){
+			tempM-=tempN;
 			res++;
 		}
-		if(m!=0){
+		if(tempM!=0){
 			res-=1;
 		}
-		return res;
+		return isSignDiscord(m,n)?-res:res;
 	}
 	
 	@Override
-	public int mult(int m, int n){
-		for(int i=1;i<n;i++){
-			m+=m;
+	public int subtract(int m, int n) {
+		//if n is negative, do a sum
+		if(n<0){
+			return sum(m,-n);
+		}
+		for (int i=0;i<n;i++){
+			m--;
 		}
 		return m;
+	}
+
+	@Override
+	public int multiply(int m, int n) {
+		int res=0;
+		//use positive values and change sign, according to initial variables, at return
+		int tempM=m<0?-m:m;
+		int tempN=n<0?-n:n;
+		for(int i=0;i<tempN;i++){
+			res+=tempM;
+		}
+		return isSignDiscord(m,n)?-res:res;
+	}
+	
+	//Return false if m and n are either both positive or negative
+	private boolean isSignDiscord(int m, int n){
+		return (m<0 && n>=0) || (n<0 && m>=0);
 	}
 }
